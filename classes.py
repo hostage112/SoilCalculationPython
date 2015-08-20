@@ -17,6 +17,15 @@ class NodeData(object):
     def setpNorm(self, pNorm):
         self.pNorm = pNorm
 
+class FinitData(object):
+    def __init__(self, name, x, y, area, corners, pNorm):
+        self.name = name
+        self.area = area
+        self.corners = corners
+        self.pNorm = pNorm
+        self.x = x
+        self.y = y
+
 class FinitElementData(object):
     def __init__(self, H):
         self.name =  np.array([])
