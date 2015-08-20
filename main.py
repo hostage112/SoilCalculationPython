@@ -7,12 +7,14 @@ import classes as data
 def importFiles():
     PATH, file = os.path.split(os.path.realpath(__file__))
     SOIL = "\\soil.txt"
-    NODE = "\\realNodes_05.csv"
-    FINIT = "\\realFinits_05.csv"
+    NODE = "\\realNodes_05.csv" #"\\nodes.csv"
+    FINIT = "\\realFinits_05.csv" #"\\finitElements.csv" 
     
     soil = imports.importSoilData(PATH + SOIL)
     nodes = imports.importNodeData(PATH + NODE)
     finits = imports.importFinitElements(nodes, PATH + FINIT)
+    
+    print "imports... done"
     return soil, nodes, finits
 
 def createBaseCase(finits, H):
@@ -26,13 +28,14 @@ def createBaseCase(finits, H):
         H0.insertCorners(finits[i].corners)
         H0.insertpNorm(finits[i].pNorm + 28)
         
+    print "H0 init... done"
     return H0
 
 
 t1 = time.time()
 
 Depth = -2.95
-deltaDepth = 10 #3.45
+deltaDepth = 3.45
 
 soil, nodes, finits = importFiles()
 H0 = createBaseCase(finits, Depth)
@@ -47,5 +50,5 @@ H1.findMaxPnorm()
 t2 = time.time()
 dt = t2 - t1
 print
-print "Arvutuse aeg:", dt, "s"
+print "Arvutuse aeg:", dt/60, "min"
 
