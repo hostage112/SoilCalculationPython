@@ -14,4 +14,9 @@ dx = 0.1
 dy = -0.3
 r = (dx**2 + dy ** 2) ** (1. / 2)
 P = 100
-print Westergaard(r, v, dz, P)
+
+
+txt = {1: "a", 3:"b", 6:"c"}
+for i in txt.keys():
+    print i,
+    print txt[i]
