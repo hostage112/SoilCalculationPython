@@ -7,8 +7,8 @@ import classes as data
 def importFiles():
     PATH, file = os.path.split(os.path.realpath(__file__))
     SOIL = "\\soil.txt"
-    NODE = "\\realNodes_05.csv" #"\\nodes.csv"
-    FINIT = "\\realFinits_05.csv" #"\\finitElements.csv" 
+    NODE = "\\nodes.csv" #"\\realNodes_05.csv" #"\\nodes.csv"
+    FINIT = "\\finitElements.csv" #"\\realFinits_05.csv" #"\\finitElements.csv" 
     
     soil = imports.importSoilData(PATH + SOIL)
     nodes = imports.importNodeData(PATH + NODE)
@@ -26,7 +26,7 @@ def createBaseCase(finits, H):
         H0.insertY(finits[i].y)
         H0.insertArea(finits[i].area)
         H0.insertCorners(finits[i].corners)
-        H0.insertpNorm(finits[i].pNorm + 28)
+        H0.insertpNorm(finits[i].pNorm)
         
     print "H0 init... done"
     return H0
