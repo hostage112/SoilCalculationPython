@@ -39,9 +39,18 @@ class FinitElementData(object):
         print "X =", self.finits[minFinitIndex].x, ";",
         print "Y =", self.finits[minFinitIndex].y
   
-    def plotSelf(self):
+    def plotSelf(self, title):
+        X = np.array([])
+        Y = np.array([])
+        pNorm = np.array([])
+        
+        for i in self.finits.keys():
+            X = np.append(X, self.finits[i].x)
+            Y = np.append(Y, self.finits[i].y)
+            pNorm = np.append(pNorm, self.pNorms[i])
+            
         fig = plt.figure()
         ax = fig.add_subplot(111, projection = '3d')
-        ax.scatter(self.x, self.y, self.pNorm)
-        plt.title("H = %s" % (self.H))
+        ax.scatter(X, Y, pNorm)
+        plt.title("%s H = %s" % (title, self.H))
         plt.show()

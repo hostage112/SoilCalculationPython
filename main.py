@@ -7,7 +7,7 @@ import work as work
 #SETTINGS
 Depth = -2.95
 deltaDepth = 3.45
-case = "test" #"test" #"real"
+case = "real" #"test" #"real"
 poisson = 0.35
 #SETTINGS
 
@@ -22,12 +22,19 @@ print "Arvutus võib võtta ligikaudu:", (len(nodes)*len(finits))/200000/60, "mi
 H0 = data.FinitElementData(finits, nodes, Depth)
 work.createBaseCase(H0, pNorms)
 H0.findMaxPnorm()
+H0.plotSelf("Base")
 
 Depth -= deltaDepth
-H1 = data.FinitElementData(finits, nodes, Depth)
-work.generateWestgaard(H1, H0, poisson)
-H1.findMaxPnorm()
-    
+H1_west = data.FinitElementData(finits, nodes, Depth)
+work.generateWestgaard(H1_west, H0, poisson)
+H1_west.findMaxPnorm()
+H1_west.plotSelf("Westgaard")
+
+H1_bouss = data.FinitElementData(finits, nodes, Depth)
+work.generateBoussinesq(H1_bouss, H0)
+H1_bouss.findMaxPnorm()
+H1_bouss.plotSelf("Boussinesq")
+
 t2 = time.time()
 dt = t2 - t1
 

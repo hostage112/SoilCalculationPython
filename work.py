@@ -67,11 +67,51 @@ def generateWestgaard(New, Old, v):
         New.pNorms[k] = finitPnorm
 
     print
-    print "Arvutus võttis osa:", len(New.nodes), "punkti"
+    print "Arvutuses võttis osa:", len(New.nodes), "punkti"
     print "Arvutus võttis:", calculationSteps, "sammu"
 
     
-    
+def generateBoussinesq(New, Old):
+        
+    global calculationSteps
+        
+    def Boussinesq(R, z, P):
+        global calculationSteps
+        soilConst = (2 * math.pi)        
+        distInfluence = (z ** 3) / (R ** 5)
+        sigma = (3 * P) * distInfluence / soilConst 
+        
+        calculationSteps += 1
+        return sigma
+        
+    def calculatePnorm(i):
+        sumPnorm = 0
+        for j in Old.finits.keys():
+            dx = abs(New.nodes[i].x - Old.finits[j].x)
+            dy = abs(New.nodes[i].y - Old.finits[j].y)
+            R = (dx**2 + dy ** 2 + dz ** 2) ** (1. / 2)
+            P = Old.pNorms[j] * Old.finits[j].area
+            sumPnorm += Boussinesq(R, dz, P)
+        return sumPnorm
+        
+    dz = abs(New.H - Old.H)
+    nodePnorms = {}
+
+    for i in New.nodes.keys():
+        nodePnorm = calculatePnorm(i)
+        nodePnorms[i] = nodePnorm
+
+    for k in New.finits.keys():
+        finitPnorm = 0
+        for m in New.finits[k].corners:
+            finitPnorm += nodePnorms[m]
+                
+        finitPnorm /= len(New.finits[k].corners)
+        New.pNorms[k] = finitPnorm
+
+    print
+    print "Arvutuses võttis osa:", len(New.nodes), "punkti"
+    print "Arvutus võttis:", calculationSteps, "sammu"
     
     
     
