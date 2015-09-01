@@ -25,15 +25,29 @@ H0.findMaxPnorm()
 H0.plotSelf("Base")
 
 Depth -= deltaDepth
-H1_west = data.FinitElementData(finits, nodes, Depth)
-work.generateWestgaard(H1_west, H0, poisson)
-H1_west.findMaxPnorm()
-H1_west.plotSelf("Westgaard")
+H1_west1 = data.FinitElementData(finits, nodes, Depth)
+work.generateWestgaard(H1_west1, H0, 0.0)
+H1_west1.findMaxPnorm()
+
+H1_west2 = data.FinitElementData(finits, nodes, Depth)
+work.generateWestgaard(H1_west2, H0, 0.1)
+H1_west2.findMaxPnorm()
+
+H1_west3 = data.FinitElementData(finits, nodes, Depth)
+work.generateWestgaard(H1_west3, H0, 0.2)
+H1_west3.findMaxPnorm()
+
+H1_west4 = data.FinitElementData(finits, nodes, Depth)
+work.generateWestgaard(H1_west4, H0, 0.3)
+H1_west4.findMaxPnorm()
+
+H1_west5 = data.FinitElementData(finits, nodes, Depth)
+work.generateWestgaard(H1_west5, H0, poisson)
+H1_west5.findMaxPnorm()
 
 H1_bouss = data.FinitElementData(finits, nodes, Depth)
 work.generateBoussinesq(H1_bouss, H0)
 H1_bouss.findMaxPnorm()
-H1_bouss.plotSelf("Boussinesq")
 
 t2 = time.time()
 dt = t2 - t1
