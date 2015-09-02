@@ -18,6 +18,7 @@ nodes, finits, pNorms = work.importFiles(case)
 print
 print "Arvutus hakkas:", datetime.datetime.now().time()
 print "Arvutus võib võtta ligikaudu:", (len(nodes)*len(finits))/200000/60, "min"
+print len(nodes)
 
 H0 = data.FinitElementData(finits, nodes, Depth)
 work.createBaseCase(H0, pNorms)
@@ -25,6 +26,7 @@ H0.findMaxPnorm()
 H0.plotSelf("Base")
 
 Depth -= deltaDepth
+"""
 H1_west1 = data.FinitElementData(finits, nodes, Depth)
 work.generateWestgaard(H1_west1, H0, 0.0)
 H1_west1.findMaxPnorm()
@@ -40,9 +42,9 @@ H1_west3.findMaxPnorm()
 H1_west4 = data.FinitElementData(finits, nodes, Depth)
 work.generateWestgaard(H1_west4, H0, 0.3)
 H1_west4.findMaxPnorm()
-
+"""
 H1_west5 = data.FinitElementData(finits, nodes, Depth)
-work.generateWestgaard(H1_west5, H0, poisson)
+work.generateWestgaard(H1_west5, H0, 0.35)
 H1_west5.findMaxPnorm()
 
 H1_bouss = data.FinitElementData(finits, nodes, Depth)

@@ -29,33 +29,34 @@ def createBaseCase(Base, pNorms):
     print "H0 init... done"
     
 def generateWestgaard(New, Old, v):
-        
-    global calculationSteps
-        
-    def Westergaard(r, v, z, P):
-        global calculationSteps
+    def Westergaard(i, j):
+        #force
+        P = Old.pNorms[j] * Old.finits[j].area
+        #geometry
+        dx = abs(New.nodes[i].x - Old.finits[j].x)
+        dy = abs(New.nodes[i].y - Old.finits[j].y)
+        r = (dx**2 + dy ** 2) ** (1. / 2)
+        #poisson
         njuu = (1 - 2 * v) / (2 * (1 - v))
-        soilConst = (2 * math.pi)
-        distInfluence = ((r / (njuu * z))** 2 + 1) ** (3. / 2)
-        sigma = P / (soilConst * (njuu) * (z ** 2) * distInfluence)
-        calculationSteps += 1
+        #influence
+        soilConst = 1 / (2 * math.pi)
+        distInfluence = njuu ** (1./2) / ((r / dz) ** 2 + njuu) ** (3./2)
+        influenceW = soilConst * distInfluence
+        #pressure
+        sigma = (P / (dz ** 2)) * influenceW
         return sigma
         
-    def calculatePnorm(i):
+    def partialNodePnorm(i):
         sumPnorm = 0
         for j in Old.finits.keys():
-            dx = abs(New.nodes[i].x - Old.finits[j].x)
-            dy = abs(New.nodes[i].y - Old.finits[j].y)
-            r = (dx**2 + dy ** 2) ** (1. / 2)
-            P = Old.pNorms[j] * Old.finits[j].area
-            sumPnorm += Westergaard(r, v, dz, P)
+            sumPnorm += Westergaard(i, j)
         return sumPnorm
         
     dz = abs(New.H - Old.H)
     nodePnorms = {}
 
     for i in New.nodes.keys():
-        nodePnorm = calculatePnorm(i)
+        nodePnorm = partialNodePnorm(i)
         nodePnorms[i] = nodePnorm
 
     for k in New.finits.keys():
@@ -66,39 +67,33 @@ def generateWestgaard(New, Old, v):
         finitPnorm /= len(New.finits[k].corners)
         New.pNorms[k] = finitPnorm
 
-    print
-    print "Arvutuses võttis osa:", len(New.nodes), "punkti"
-    print "Arvutus võttis:", calculationSteps, "sammu"
-
-    
 def generateBoussinesq(New, Old):
-        
-    global calculationSteps
-        
-    def Boussinesq(R, z, P):
-        global calculationSteps
-        soilConst = (2 * math.pi)        
-        distInfluence = (z ** 3) / (R ** 5)
-        sigma = (3 * P) * distInfluence / soilConst 
-        
-        calculationSteps += 1
+    def Boussinesq(i, j):
+        #force
+        P = Old.pNorms[j] * Old.finits[j].area
+        #geometry
+        dx = abs(New.nodes[i].x - Old.finits[j].x)
+        dy = abs(New.nodes[i].y - Old.finits[j].y)
+        r = (dx**2 + dy ** 2) ** (1. / 2)
+        #influence
+        soilConst = 1 / (2 * math.pi)        
+        distInfluence = 1 / ((1 + (r / dz) ** 2) ** (5. / 2))
+        influenceB = 3 * soilConst * distInfluence
+        #pressure
+        sigma = (P / (dz ** 2)) * influenceB
         return sigma
         
-    def calculatePnorm(i):
+    def partialNodePnorm(i):
         sumPnorm = 0
         for j in Old.finits.keys():
-            dx = abs(New.nodes[i].x - Old.finits[j].x)
-            dy = abs(New.nodes[i].y - Old.finits[j].y)
-            R = (dx**2 + dy ** 2 + dz ** 2) ** (1. / 2)
-            P = Old.pNorms[j] * Old.finits[j].area
-            sumPnorm += Boussinesq(R, dz, P)
+            sumPnorm += Boussinesq(i, j)
         return sumPnorm
         
     dz = abs(New.H - Old.H)
     nodePnorms = {}
 
     for i in New.nodes.keys():
-        nodePnorm = calculatePnorm(i)
+        nodePnorm = partialNodePnorm(i)
         nodePnorms[i] = nodePnorm
 
     for k in New.finits.keys():
@@ -107,11 +102,5 @@ def generateBoussinesq(New, Old):
             finitPnorm += nodePnorms[m]
                 
         finitPnorm /= len(New.finits[k].corners)
-        New.pNorms[k] = finitPnorm
-
-    print
-    print "Arvutuses võttis osa:", len(New.nodes), "punkti"
-    print "Arvutus võttis:", calculationSteps, "sammu"
-    
-    
+        New.pNorms[k] = finitPnorm 
     
