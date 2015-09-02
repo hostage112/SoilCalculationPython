@@ -3,18 +3,20 @@ import time
 import datetime
 import classes as data
 import work as work
+import mesh as mesh
 
 #SETTINGS
 Depth = -2.95
 deltaDepth = 3.45
-case = "real" #"test" #"real"
+case = "test" #"test" #"real"
 poisson = 0.35
 #SETTINGS
 
 t1 = time.time()
 
-nodes, finits, pNorms = work.importFiles(case)
-
+robotNodes, robotFinits, robotPnorms = work.importFiles(case)
+mesh.generateNewMesh(robotNodes, 0.5)
+"""
 print
 print "Arvutus hakkas:", datetime.datetime.now().time()
 print "Arvutus võib võtta ligikaudu:", (len(nodes)*len(finits))/200000/60, "min"
@@ -26,7 +28,7 @@ H0.findMaxPnorm()
 H0.plotSelf("Base")
 
 Depth -= deltaDepth
-"""
+
 H1_west1 = data.FinitElementData(finits, nodes, Depth)
 work.generateWestgaard(H1_west1, H0, 0.0)
 H1_west1.findMaxPnorm()
@@ -42,7 +44,7 @@ H1_west3.findMaxPnorm()
 H1_west4 = data.FinitElementData(finits, nodes, Depth)
 work.generateWestgaard(H1_west4, H0, 0.3)
 H1_west4.findMaxPnorm()
-"""
+
 H1_west5 = data.FinitElementData(finits, nodes, Depth)
 work.generateWestgaard(H1_west5, H0, 0.35)
 H1_west5.findMaxPnorm()
@@ -56,3 +58,4 @@ dt = t2 - t1
 
 print
 print "Arvutuse võttis aega:", dt/60, "min"
+"""
