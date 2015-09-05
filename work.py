@@ -9,11 +9,11 @@ calculationSteps = 0
 def importFiles(case):
     PATH, file = os.path.split(os.path.realpath(__file__))
     if (case == "test"):
-        NODE = "\\nodes.csv"
-        FINIT = "\\finitElements.csv"
+        NODE = "/nodes.csv"
+        FINIT = "/finitElements.csv"
     elif (case == "real"):
-        NODE = "\\realNodes_05.csv"
-        FINIT = "\\realFinits_05.csv"
+        NODE = "/realNodes_05.csv"
+        FINIT = "/realFinits_05.csv"
         
     nodes = imports.importNodeData(PATH + NODE)
     finits, pNorms = imports.importFinitElements(nodes, PATH + FINIT)

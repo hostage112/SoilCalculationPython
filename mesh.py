@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 import classes as data
+import numpy as np
+
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
+import matplotlib.pyplot as plt
 
 def generateNewMesh(robotNodes, finitSize):
     x0 = 0.0
@@ -51,20 +56,14 @@ def generateNewMesh(robotNodes, finitSize):
     print dx, dy
     print finitSize
     
+    X = np.arange(newX0, newXmax+finitSize, finitSize)  
+    Y = np.arange(newY0, newYmax+finitSize, finitSize)
+    X, Y = np.meshgrid(X, Y)
+    P = np.sqrt(X**2 + Y**2)
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+            
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+    surf = ax.plot_surface(X, Y, P, rstride=1, cstride=1, cmap=cm.coolwarm,
+        linewidth=0, antialiased=False)
+    plt.show()
