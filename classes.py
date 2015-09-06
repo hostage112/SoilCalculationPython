@@ -18,9 +18,9 @@ class FinitData(object):
         self.y = y
 
 class FinitElementData(object):
-    def __init__(self, finits, nodes, H):
-        self.finits = finits
+    def __init__(self, nodes, finits, H):
         self.nodes = nodes
+        self.finits = finits
         self.H = H
         self.pNorms = {}
                       

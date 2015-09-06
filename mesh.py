@@ -2,68 +2,100 @@
 import classes as data
 import numpy as np
 
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FormatStrFormatter
-import matplotlib.pyplot as plt
+def generateNewMesh(robotNodes, finitSize, sizeInc = 1.1):
+    def calculateFinitElementCoords(corners):
+        midX = 0
+        midY = 0
 
-def generateNewMesh(robotNodes, finitSize):
-    x0 = 0.0
-    xm = 0.0
-    y0 = 0.0
-    ym = 0.0
+        for node in corners:
+            midX += calcNodes[node].x
+            midY += calcNodes[node].y
+            
+        midX /= len(corners)
+        midY /= len(corners)
+            
+        return midX, midY
+
+    foundationX0 = 0.0
+    foundationXmax = 0.0
+    foundationY0 = 0.0
+    foundationYmax = 0.0
 
     for i in robotNodes.keys():
-        if robotNodes[i].x < x0:
-            x0 = robotNodes[i].x
-        if robotNodes[i].x > xm:
-            xm = robotNodes[i].x
-        if robotNodes[i].y < y0:
-            y0 = robotNodes[i].y
-        if robotNodes[i].y > ym:
-            ym = robotNodes[i].y
+        if robotNodes[i].x < foundationX0:
+            foundationX0 = robotNodes[i].x
+        if robotNodes[i].x > foundationXmax:
+            foundationXmax = robotNodes[i].x
+        if robotNodes[i].y < foundationY0:
+            foundationY0 = robotNodes[i].y
+        if robotNodes[i].y > foundationYmax:
+            foundationYmax = robotNodes[i].y
       
-    dx = abs(xm - x0)
-    dy = abs(ym - y0)
+    foundationSizeX = abs(foundationXmax - foundationX0)
+    foundationSizeY = abs(foundationYmax - foundationY0)
     
-    print      
-    print "old", x0, xm, y0, ym
-    print dx, dy
-        
-    a = 0.1 * dx
-    b = 0.1 * dy
-    
-    modx = (dx + 2*a) % finitSize
-    mody = (dy + 2*b) % finitSize
-    
+    print "foundation X", foundationX0, foundationXmax, foundationSizeX
+    print "foundation Y",foundationY0, foundationYmax, foundationSizeY
+
+    calcSizeX = foundationSizeX * sizeInc
+    calcSizeY = foundationSizeY * sizeInc   
+
+    print "calculation X", calcSizeX
+    print "calculation Y", calcSizeY
+
+    modx = calcSizeX % finitSize
+    mody = calcSizeY % finitSize
+
     if modx != 0:
-        print "täpstustan"
-        a += modx/2 + finitSize/2
-        modx = (dx + 2*a) % finitSize
+        print "täpstustan X"
+        calcSizeX = calcSizeX - modx + finitSize
+        modx = round(calcSizeX % finitSize, 2)
     if mody != 0:
-        b += mody/2 + finitSize/2
-        mody = (dy + 2*b) % finitSize
+        print "täpstustan Y"
+        calcSizeY = calcSizeY - mody + finitSize
+        mody = round(calcSizeY % finitSize, 2)
+
+    calcX0 = foundationX0 + (foundationSizeX - calcSizeX)/2
+    calcY0 = foundationY0 + (foundationSizeY - calcSizeY)/2
+    calcXmax = foundationXmax - (foundationSizeX - calcSizeX)/2
+    calcYmax = foundationYmax - (foundationSizeY - calcSizeY)/2
     
-    newX0 = x0 - a
-    newY0 = y0 - b
-    newXmax = xm + a
-    newYmax = ym + b
+    print "calculation X", calcX0, calcXmax, calcSizeX
+    print "calculation Y", calcY0, calcYmax, calcSizeY
     
-    dx = abs(newXmax - newX0)
-    dy = abs(newYmax - newY0)
-    
-    print
-    print "new", newX0, newY0, newXmax, newYmax
-    print dx, dy
-    print finitSize
-    
-    X = np.arange(newX0, newXmax+finitSize, finitSize)  
-    Y = np.arange(newY0, newYmax+finitSize, finitSize)
+    X = np.arange(calcX0, calcXmax+finitSize, finitSize)  
+    Y = np.arange(calcY0, calcYmax+finitSize, finitSize)
     X, Y = np.meshgrid(X, Y)
-    P = np.sqrt(X**2 + Y**2)
     
-            
-    fig = plt.figure()
-    ax = fig.gca(projection='3d')
-    surf = ax.plot_surface(X, Y, P, rstride=1, cstride=1, cmap=cm.coolwarm,
-        linewidth=0, antialiased=False)
-    plt.show()
+    dy, dx= X.shape
+    
+    calcNodes = {}
+    calcNodesList = [] 
+    nodeName = 0
+    
+    for y in range(dy):
+        calcNodeTempList = []
+        for x in range(dx):
+            tempNodeHolder = data.NodeData(nodeName, X[y, x], Y[y, x])
+            calcNodes[nodeName] = tempNodeHolder
+            calcNodeTempList.append(tempNodeHolder)
+            nodeName += 1
+        calcNodesList.append(calcNodeTempList)
+
+    calcFinits = {}
+    finitName = 0
+    
+    for finY in range(dy-1):
+        for finX in range (dx-1):
+            cor1 = calcNodesList[finY][finX].name
+            cor2 = calcNodesList[finY][finX+1].name
+            cor3 = calcNodesList[finY+1][finX].name
+            cor4 = calcNodesList[finY+1][finX+1].name
+            corners = [cor1, cor2, cor3, cor4]
+            finitX, finitY = calculateFinitElementCoords(corners)
+            area = finitSize ** 2
+            calcFinits[finitName] = data.FinitData(finitName, 
+                                    finitX, finitY, area, corners)
+            finitName += 1            
+
+    return calcNodes, calcFinits
