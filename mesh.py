@@ -77,7 +77,7 @@ def generateNewMesh(robotNodes, finitSize, sizeInc):
     X = np.arange(calcX0, calcXmax+finitSize, finitSize)  
     Y = np.arange(calcY0, calcYmax+finitSize, finitSize)
     X, Y = np.meshgrid(X, Y)
-    
+       
     dy, dx= X.shape
     
     calcNodes = {}

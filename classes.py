@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 import math 
 
+class SoilData(object):
+    def __init__(self, name, depth, roo):
+        self.name = int(name)
+        self.depth = float(depth)
+        self.roo = float(roo)
+
 class NodeData(object):
     def __init__(self, name, x, y):
         self.name = name
@@ -31,14 +37,52 @@ class FinitElementData(object):
                 minPnorm = self.pNorms[i]
                 
         print 
-        print "Suurim absoluutne pinge kõrgusel H =", self.H
+        print "Max pressure at H =", self.H
         print "pNorm = ", self.pNorms[minFinitIndex]
         print "Finit =", self.finits[minFinitIndex].name, ";",
         print "X =", self.finits[minFinitIndex].x, ";",
         print "Y =", self.finits[minFinitIndex].y
 
-    def createBaseCase(Base, pNorms):
-        Base.pNorms = pNorms
+    def createBaseCase(self, pNorms, soils, waterDepth):
+        SelfWeightPressure = 0.0
+        waterPressure = waterDepth * 10
+        lastSoil = SoilData(0, 0.0, 0.0)
+        
+        def getSelfWeightPressure(soil, lastSoil):
+            deltaDepth = soil.depth - lastSoil.depth
+            
+            if soil.depth <= waterDepth:
+                return soil.roo * deltaDepth
+            
+            if lastSoil.depth >= waterDepth:
+                return (soil.roo - 10) * deltaDepth
+                       
+            withoutWaterDelta = waterDepth - lastSoil.depth
+            withWaterDelta = soil.depth - waterDepth
+            
+            argRoo = (withoutWaterDelta * soil.roo + withWaterDelta * (soil.roo - 10)) / (deltaDepth)
+            return argRoo * deltaDepth
+        
+        for i in soils.keys():
+            if soils[i].depth < self.H:
+                SelfWeightPressure += getSelfWeightPressure(soils[i], lastSoil)
+            else:
+                currentSoil = SoilData(777, self.H, soils[i].roo)
+                SelfWeightPressure += getSelfWeightPressure(currentSoil, lastSoil)
+                break
+            lastSoil = soils[i]
+        
+        print 
+        print "Self:", SelfWeightPressure, "Water:", waterPressure
+                
+        for i in pNorms.keys():
+            mathPnormValue = pNorms[i] + waterPressure# + SelfWeightPressure
+            if mathPnormValue > 0:
+                pNorms[i] = 0
+            else:
+                pNorms[i] = mathPnormValue
+        
+        self.pNorms = pNorms 
         
         print    
         print "H0 init... done"

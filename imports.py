@@ -9,15 +9,18 @@ def importFiles(case):
     if (case == "test"):
         NODE = "/nodes.csv"
         FINIT = "/finitElements.csv"
+        SOIL = "/soil.txt"
     elif (case == "real"):
         NODE = "/realNodes_05.csv"
         FINIT = "/realFinits_05.csv"
+        SOIL = "/realSoil.txt"
         
     nodes = importNodeData(PATH + NODE)
     finits, pNorms = importFinitElements(nodes, PATH + FINIT)
-    
+    soils = importSoilData(PATH + SOIL)
+        
     print "imports... done"
-    return nodes, finits, pNorms
+    return nodes, finits, pNorms, soils
 
 def importNodeData(PATH):
     nodesFile = codecs.open(PATH, 'r', 'utf-16')
@@ -84,3 +87,20 @@ def importFinitElements(nodes, PATH):
     finitFile.close()
 
     return finits, pNorms
+    
+def importSoilData(PATH):
+
+    soilFile = open(PATH, 'r')
+
+    soils = {}
+            
+    for row in soilFile:
+        splitRow = row.split(";")
+        name = int(splitRow[0])
+        depth = float(splitRow[1])
+        roo = float(splitRow[2])
+        soils[name] = data.SoilData(name, depth, roo)
+
+    soilFile.close()
+
+    return soils
