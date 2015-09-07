@@ -1,7 +1,23 @@
 # -*- coding: utf-8 -*-
+import os
 import csv
 import codecs
 import classes as data
+
+def importFiles(case):
+    PATH, file = os.path.split(os.path.realpath(__file__))
+    if (case == "test"):
+        NODE = "/nodes.csv"
+        FINIT = "/finitElements.csv"
+    elif (case == "real"):
+        NODE = "/realNodes_05.csv"
+        FINIT = "/realFinits_05.csv"
+        
+    nodes = importNodeData(PATH + NODE)
+    finits, pNorms = importFinitElements(nodes, PATH + FINIT)
+    
+    print "imports... done"
+    return nodes, finits, pNorms
 
 def importNodeData(PATH):
     nodesFile = codecs.open(PATH, 'r', 'utf-16')
@@ -68,5 +84,3 @@ def importFinitElements(nodes, PATH):
     finitFile.close()
 
     return finits, pNorms
-
-
