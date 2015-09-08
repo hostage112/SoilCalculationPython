@@ -29,8 +29,8 @@ class FinitElementData(object):
         self.pNorms = {}
                       
     def findMaxPnorm(self):
-        minFinitIndex = 0
-        minPnorm = 0
+        minFinitIndex = self.pNorms.keys()[0]
+        minPnorm = self.pNorms[minFinitIndex]
         for i in self.pNorms.keys():
             if abs(self.pNorms[i]) > abs(minPnorm):
                 minFinitIndex = i
@@ -44,6 +44,8 @@ class FinitElementData(object):
         print "Y =", self.finits[minFinitIndex].y
 
     def createBaseCase(self, pNorms, soils, waterDepth):
+        self.pNorms = pNorms.copy()
+        
         SelfWeightPressure = 0.0
         waterPressure = waterDepth * 10
         lastSoil = SoilData(0, 0.0, 0.0)
@@ -76,14 +78,12 @@ class FinitElementData(object):
         print "Self:", SelfWeightPressure, "Water:", waterPressure
                 
         for i in pNorms.keys():
-            mathPnormValue = pNorms[i] + waterPressure# + SelfWeightPressure
+            mathPnormValue = pNorms[i] + waterPressure + SelfWeightPressure
             if mathPnormValue > 0:
-                pNorms[i] = 0
+                self.pNorms[i] = 0
             else:
-                pNorms[i] = mathPnormValue
-        
-        self.pNorms = pNorms 
-        
+                self.pNorms[i] = mathPnormValue
+               
         print    
         print "H0 init... done"
 
