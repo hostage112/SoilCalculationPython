@@ -7,8 +7,8 @@ import imports as imp
 import plotting as plts
 
 #SETTINGS
-case = "real" #"test" #"real"
-thoery = "Westergaard" #"Boussinesq" "Westergaard"
+case = "test" #"test" #"real"
+#thoery = "Westergaard" #"Boussinesq" "Westergaard"
 
 finitSize = 0.5
 calcAreaMultiplier = 1.6
@@ -17,7 +17,7 @@ depthSetting = 5.05
 deltaDepth = 3.45
 
 if case == "test":
-    waterDepth = 0.0
+    waterDepth = depthSetting #if  water depth = foundation depth pressure = 0
 elif case == "real":
     waterDepth = 2.25
 
@@ -43,31 +43,38 @@ plts.plotBaseCase(H0, "Data from Robot")
 
 Depth += deltaDepth
 
-#H1 = data.FinitElementData(calcNodes, calcFinits, Depth)
-#H1.generatePnormValues(H0, thoery, poisson)
-#H1.findMaxPnorm()
-#plts.plotFinalResult(H1, H0, thoery)
+H1 = data.FinitElementData(calcNodes, calcFinits, Depth)
+H1.generatePnormValues(H0, "Westergaard", poisson)
+H1.findMaxPnorm()
+plts.plotFinalResult(H1, H0, "Westergaard")
+
+H1 = data.FinitElementData(calcNodes, calcFinits, Depth)
+H1.generatePnormValues(H0, "Boussinesq")
+H1.findMaxPnorm()
+plts.plotFinalResult(H1, H0, "Boussinesq")
 
 #LESS WATER CALCULATION
-Depth = depthSetting
-waterDepth -= 1
+#Depth = depthSetting
+#waterDepth += 1
+#
+#HH0 = data.FinitElementData(robotNodes, robotFinits, Depth)
+#HH0.createBaseCase(robotPnorms, soils, waterDepth)
+#HH0.findMaxPnorm()
+#plts.plotBaseCase(HH0, "Data from Robot")
+#
+#print waterDepth
 
-HH0 = data.FinitElementData(robotNodes, robotFinits, Depth)
-HH0.createBaseCase(robotPnorms, soils, waterDepth)
-HH0.findMaxPnorm()
-plts.plotBaseCase(HH0, "Data from Robot")
+#Depth += deltaDepth
 
-Depth += deltaDepth
-
-HH1 = data.FinitElementData(calcNodes, calcFinits, Depth)
-HH1.generatePnormValues(HH0, thoery, poisson)
-HH1.findMaxPnorm()
-plts.plotFinalResult(HH1, HH0, thoery)
-
-HH2 = data.FinitElementData(calcNodes, calcFinits, Depth)
-HH2.generatePnormValues(HH0, "Boussinesq", poisson)
-HH2.findMaxPnorm()
-plts.plotFinalResult(HH2, HH0, "Boussinesq")
+#HH1 = data.FinitElementData(calcNodes, calcFinits, Depth)
+#HH1.generatePnormValues(HH0, "Westergaard", poisson)
+#HH1.findMaxPnorm()
+#plts.plotFinalResult(HH1, HH0, "Westergaard")
+#
+#HH2 = data.FinitElementData(calcNodes, calcFinits, Depth)
+#HH2.generatePnormValues(HH0, "Boussinesq", poisson)
+#HH2.findMaxPnorm()
+#plts.plotFinalResult(HH2, HH0, "Boussinesq")
 
 t2= time.time()
 dtk = t2 - t1

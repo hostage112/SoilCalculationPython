@@ -47,7 +47,11 @@ class FinitElementData(object):
         self.pNorms = pNorms.copy()
         
         SelfWeightPressure = 0.0
-        waterPressure = waterDepth * 10
+        
+        waterPressure = (self.H - waterDepth) * 10
+        if waterPressure < 0:
+            waterPressure = 0
+            
         lastSoil = SoilData(0, 0.0, 0.0)
         
         def getSelfWeightPressure(soil, lastSoil):
