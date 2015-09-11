@@ -7,8 +7,7 @@ import imports as imp
 import plotting as plts
 
 #SETTINGS
-case = "test" #"test" #"real"
-#thoery = "Westergaard" #"Boussinesq" "Westergaard"
+case = "real" #"test" #"real"
 
 finitSize = 0.5
 calcAreaMultiplier = 1.6
@@ -41,17 +40,17 @@ H0.createBaseCase(robotPnorms, soils, waterDepth)
 H0.findMaxPnorm()
 plts.plotBaseCase(H0, "Data from Robot")
 
-Depth += deltaDepth
+#Depth += deltaDepth
 
-H1 = data.FinitElementData(calcNodes, calcFinits, Depth)
-H1.generatePnormValues(H0, "Westergaard", poisson)
-H1.findMaxPnorm()
-plts.plotFinalResult(H1, H0, "Westergaard")
+#H1 = data.FinitElementData(calcNodes, calcFinits, Depth)
+#H1.generatePnormValues(H0, "Westergaard", poisson)
+#H1.findMaxPnorm()
+#plts.plotFinalResult(H1, H0, "Westergaard")
 
-H1 = data.FinitElementData(calcNodes, calcFinits, Depth)
-H1.generatePnormValues(H0, "Boussinesq")
-H1.findMaxPnorm()
-plts.plotFinalResult(H1, H0, "Boussinesq")
+#H1 = data.FinitElementData(calcNodes, calcFinits, Depth)
+#H1.generatePnormValues(H0, "Boussinesq")
+#H1.findMaxPnorm()
+#plts.plotFinalResult(H1, H0, "Boussinesq")
 
 #LESS WATER CALCULATION
 #Depth = depthSetting

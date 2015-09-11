@@ -82,7 +82,7 @@ class FinitElementData(object):
         print "Self:", SelfWeightPressure, "Water:", waterPressure
                 
         for i in pNorms.keys():
-            mathPnormValue = pNorms[i] + waterPressure + SelfWeightPressure
+            mathPnormValue = pNorms[i]+ waterPressure + SelfWeightPressure
             if mathPnormValue > 0:
                 self.pNorms[i] = 0
             else:
