@@ -32,10 +32,10 @@ def arvutus():
 
     #Results
     H0.findMaxPnorm()
-    plts.plotBaseCase(H0, "Data from Robot")
+    plts.plotResults(H0, "Data from Robot")
 
     H1.findMaxPnorm()
-    plts.plotFinalResult(H1, H0, calculationType)
+    plts.plotResults(H1, calculationType)
 
     #TIMER
     t2= time.time()
