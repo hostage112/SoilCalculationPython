@@ -4,67 +4,53 @@ import csv
 import codecs
 import classes as data
 
-def importFiles(case):
+def importFiles():
     PATH, file = os.path.split(os.path.realpath(__file__))
-    if (case == "test"):
-        NODE = "/nodes.csv"
-        FINIT = "/finitElements.csv"
-        SOIL = "/soil.txt"
-    elif (case == "real"):
-        NODE = "/realNodes_05.csv"
-        FINIT = "/realFinits_05.csv"
-        SOIL = "/realSoil.txt"
-        
+    NODE = "/realNodes_05.csv"
+    FINIT = "/realFinits_05.csv"
+    SOIL = "/realSoil.txt"
+
     nodes = importNodeData(PATH + NODE)
     finits, pNorms = importFinitElements(nodes, PATH + FINIT)
     soils = importSoilData(PATH + SOIL)
-        
-    print "imports... done"
+
+    print "Imports - done"
     return nodes, finits, pNorms, soils
 
 def importNodeData(PATH):
-    nodesFile = codecs.open(PATH, 'r', 'utf-16')
-    
-    csv.register_dialect('ess', delimiter=';', skipinitialspace=True)
-    reader = csv.reader(nodesFile, dialect='ess')
-    csv.unregister_dialect('ess')
-
     nodes = {}
-    
+
+    nodesFile = codecs.open(PATH, 'r', 'utf-16')
+    reader = csv.reader(nodesFile, delimiter=';', skipinitialspace=True)
     next(reader, None)
+
     for row in reader:
         if abs(float(row[3].replace(",", "."))) < 0.001:
             name = int(row[0])
             x = float(row[1].replace(",", "."))
             y = float(row[2].replace(",", "."))
             nodes[name] = data.NodeData(name, x, y)
-  
+
     nodesFile.close()
-    
+
     return nodes
 
 def importFinitElements(nodes, PATH):
-    def calculateFinitElementCoords(corners):
+    def calculateCenter(corners):
         midX = 0
         midY = 0
-
         for node in corners:
             midX += nodes[node].x
             midY += nodes[node].y
-            
         midX /= len(corners)
         midY /= len(corners)
-            
         return midX, midY
-
-    finitFile = codecs.open(PATH, 'r', 'utf-16')
-
-    csv.register_dialect('ess', delimiter=';', skipinitialspace=True)
-    reader = csv.reader(finitFile, dialect='ess')
-    csv.unregister_dialect('ess')
 
     finits = {}
     pNorms = {}
+
+    finitFile = codecs.open(PATH, 'r', 'utf-16')
+    reader = csv.reader(finitFile, delimiter=';', skipinitialspace=True)
 
     next(reader, None)
 
@@ -79,21 +65,20 @@ def importFinitElements(nodes, PATH):
                 corners.append(node)
             except:
                 pass
-        x, y = calculateFinitElementCoords(corners)
-        
+        x, y = calculateCenter(corners)
+
         finits[name] = data.FinitData(name, x, y, area, corners)
         pNorms[name] = finitPnorm
 
     finitFile.close()
 
     return finits, pNorms
-    
+
 def importSoilData(PATH):
+    soils = {}
 
     soilFile = open(PATH, 'r')
 
-    soils = {}
-            
     for row in soilFile:
         splitRow = row.split(";")
         name = int(splitRow[0])
@@ -104,3 +89,5 @@ def importSoilData(PATH):
     soilFile.close()
 
     return soils
+
+
