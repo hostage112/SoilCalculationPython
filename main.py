@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*- import time import datetime
 import time
 import datetime
 
@@ -6,12 +6,15 @@ import classes as data
 import imports as imp
 import plotting as plts
 
+import matplotlib.pyplot as plt
+
 def arvutus():
     #SETTINGS
     depth = 5.120
-    deltaDepth = 3.380
+    deltaDepth = 3.580 #3.38 + 0.2 killustiku arvelt
 
-    calculationType = "Westergaard" #"Boussinesq"
+    calculationType = "Westergaard"
+    #calculationType = "Boussinesq"
     poisson = 0.0
 
     #TIMER
@@ -40,6 +43,7 @@ def arvutus():
     #TIMER
     t2= time.time()
     print "\nCalculation took:", (t2 - t1)/60, "min"
+    plt.show()
 
 if __name__ == '__main__':
     arvutus()

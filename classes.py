@@ -29,18 +29,20 @@ class FinitElementData(object):
         self.pNorms = {}
 
     def findMaxPnorm(self):
-        minFinitIndex = self.pNorms.keys()[0]
-        minPnorm = self.pNorms[minFinitIndex]
+        maxFinitIndex = self.pNorms.keys()[0]
+        maxPnorm = self.pNorms[maxFinitIndex]
         for i in self.pNorms.keys():
-            if abs(self.pNorms[i]) > abs(minPnorm):
-                minFinitIndex = i
-                minPnorm = self.pNorms[i]
+            if abs(self.pNorms[i]) > abs(maxPnorm):
+                maxFinitIndex = i
+                maxPnorm = self.pNorms[i]
 
         print "\nMax pressure at H =", self.H
-        print "pNorm = ", self.pNorms[minFinitIndex]
-        print "Finit =", self.finits[minFinitIndex].name, ";",
-        print "X =", self.finits[minFinitIndex].x, ";",
-        print "Y =", self.finits[minFinitIndex].y
+        print "pNorm = ", self.pNorms[maxFinitIndex]
+        print "Finit =", self.finits[maxFinitIndex].name, ";",
+        print "X =", self.finits[maxFinitIndex].x, ";",
+        print "Y =", self.finits[maxFinitIndex].y
+
+        return maxPnorm
 
     def createBaseCase(self, pNorms, soils):
         self.pNorms = pNorms.copy()
@@ -65,11 +67,8 @@ class FinitElementData(object):
         print "Self weight:", SelfWeightPressure
 
         for i in pNorms.keys():
-            mathPnormValue = pNorms[i] + SelfWeightPressure
-            if mathPnormValue > 0:
-                self.pNorms[i] = 0
-            else:
-                self.pNorms[i] = mathPnormValue
+            mathPnormValue = pNorms[i] - SelfWeightPressure
+            self.pNorms[i] = max(0, mathPnormValue)
 
         print
         print "Init - done"

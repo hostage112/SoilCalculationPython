@@ -6,9 +6,9 @@ import classes as data
 
 def importFiles():
     PATH, file = os.path.split(os.path.realpath(__file__))
-    NODE = "/realNodes_05.csv"
-    FINIT = "/realFinits_05.csv"
-    SOIL = "/realSoil.txt"
+    NODE = "/nodes.csv"
+    FINIT = "/finits.csv"
+    SOIL = "/soil.txt"
 
     nodes = importNodeData(PATH + NODE)
     finits, pNorms = importFinitElements(nodes, PATH + FINIT)
@@ -25,7 +25,7 @@ def importNodeData(PATH):
     next(reader, None)
 
     for row in reader:
-        if abs(float(row[3].replace(",", "."))) < 0.001:
+        if float(row[3].replace(",", ".")) < 0.001:
             name = int(row[0])
             x = float(row[1].replace(",", "."))
             y = float(row[2].replace(",", "."))
@@ -56,7 +56,7 @@ def importFinitElements(nodes, PATH):
 
     for row in reader:
         name = int(row[0])
-        finitPnorm = float(row[2].replace(",", ".")) * (-1)
+        finitPnorm = float(row[2].replace(",", "."))
         area = float(row[3].replace(",", "."))
         corners = []
         for i in range(4, len(row)):

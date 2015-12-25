@@ -2,26 +2,30 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from matplotlib import cm
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib.ticker import LinearLocator, FormatStrFormatter
-
 def plotResults(target, title):
+    Xfail = np.array([])
+    Yfail = np.array([])
+
     X = np.array([])
     Y = np.array([])
     pNorm = np.array([])
 
     for i in target.finits.keys():
-        X = np.append(X, target.finits[i].x)
-        Y = np.append(Y, target.finits[i].y)
-        pNorm = np.append(pNorm, target.pNorms[i])
+        if abs(target.pNorms[i]) > 5.0:
+            Xfail = np.append(Xfail, target.finits[i].x)
+            Yfail = np.append(Yfail, target.finits[i].y)
+        else:
+            X = np.append(X, target.finits[i].x)
+            Y = np.append(Y, target.finits[i].y)
+            pNorm = np.append(pNorm, target.pNorms[i])
 
     plt.figure()
     plt.scatter(X, Y, c = pNorm, s=17, edgecolors = 'none', cmap = 'cool')
+    #plt.scatter(X, Y, c = pNorm, s=17, edgecolors = 'none', cmap = 'cool', vmin = -30, vmax = 0) #HACK
     plt.title("%s H = %s" % (title, target.H))
     plt.axis('equal')
     plt.colorbar()
-    plt.show()
+    plt.scatter(Xfail, Yfail, c = 'red', s=16)
 
 def plotBaseCase(target, title):
     X = np.array([])
