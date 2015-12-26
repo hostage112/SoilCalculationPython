@@ -39,7 +39,6 @@ def arvutus():
 
     H1.findMaxPnorm()
     plts.plotResults(H1, calculationType)
-    plts.plotFinalResult(H1, H0, "gg")
 
     #TIMER END
     t2= time.time()
