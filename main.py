@@ -11,13 +11,13 @@ import matplotlib.pyplot as plt
 def arvutus():
     #SETTINGS
     depth = 5.120
-    deltaDepth = 3.580 #3.38 + 0.2 killustiku arvelt
+    deltaDepth = 3.380
 
-    calculationType = "Westergaard"
     #calculationType = "Boussinesq"
+    calculationType = "Westergaard"
     poisson = 0.0
 
-    #TIMER
+    #TIMER START
     t1 = time.time()
     print "\nCalcualtion start at:", datetime.datetime.now().time()
 
@@ -39,10 +39,13 @@ def arvutus():
 
     H1.findMaxPnorm()
     plts.plotResults(H1, calculationType)
+    plts.plotFinalResult(H1, H0, "gg")
 
-    #TIMER
+    #TIMER END
     t2= time.time()
     print "\nCalculation took:", (t2 - t1)/60, "min"
+
+    #Show all plots
     plt.show()
 
 if __name__ == '__main__':
