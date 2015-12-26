@@ -21,7 +21,7 @@ class FinitData(object):
         self.x = x
         self.y = y
 
-class FinitElementData(object):
+class PlaneData(object):
     def __init__(self, nodes, finits, H):
         self.nodes = nodes
         self.finits = finits

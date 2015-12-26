@@ -25,12 +25,12 @@ def arvutus():
     robotNodes, robotFinits, robotPnorms, soils = imp.importFiles()
     calcNodes, calcFinits = robotNodes, robotFinits
 
-    H0 = data.FinitElementData(robotNodes, robotFinits, depth)
+    H0 = data.PlaneData(robotNodes, robotFinits, depth)
     H0.createBaseCase(robotPnorms, soils)
 
     #Calculation of new plane
     depth += deltaDepth
-    H1 = data.FinitElementData(calcNodes, calcFinits, depth)
+    H1 = data.PlaneData(calcNodes, calcFinits, depth)
     H1.generatePnormValues(H0, calculationType, poisson)
 
     #Results
