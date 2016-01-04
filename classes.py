@@ -49,7 +49,7 @@ class PlaneData(object):
         print "Y =", self.finits[maxFinitIndex].y
 
     def calculateEffectivePressure(self):
-        SelfWeightPressure = 0 #19.0 * self.H
+        SelfWeightPressure = 19.0 * self.H
 
         print "Self weight:", SelfWeightPressure
 
@@ -107,5 +107,3 @@ class PlaneData(object):
 
         for i in self.finits.keys():
             self.finits[i].pNorm = newPnorm(i)
-
-
