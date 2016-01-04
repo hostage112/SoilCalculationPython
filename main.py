@@ -10,8 +10,8 @@ import matplotlib.pyplot as plt
 
 def arvutus():
     #SETTINGS
-    depth = 5.120
-    deltaDepth = 3.380
+    depth = 5.220
+    deltaDepth = 3.280
 
     #calculationType = "Boussinesq"
     calculationType = "Westergaard"
@@ -22,11 +22,11 @@ def arvutus():
     print "\nCalcualtion start at:", datetime.datetime.now().time()
 
     #Initialization
-    robotNodes, robotFinits, robotPnorms, soils = imp.importFiles()
+    robotNodes, robotFinits, robotPnorms = imp.importFiles()
     calcNodes, calcFinits = robotNodes, robotFinits
 
     H0 = data.PlaneData(robotNodes, robotFinits, depth)
-    H0.createBaseCase(robotPnorms, soils)
+    H0.createBaseCase(robotPnorms)
 
     #Calculation of new plane
     depth += deltaDepth

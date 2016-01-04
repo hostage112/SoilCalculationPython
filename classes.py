@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
 import math
 
-class SoilData(object):
-    def __init__(self, name, depth, roo):
-        self.name = int(name)
-        self.depth = float(depth)
-        self.roo = float(roo)
-
 class NodeData(object):
     def __init__(self, name, x, y):
         self.name = name
@@ -44,24 +38,9 @@ class PlaneData(object):
 
         return maxPnorm
 
-    def createBaseCase(self, pNorms, soils):
+    def createBaseCase(self, pNorms):
         self.pNorms = pNorms.copy()
-        SelfWeightPressure = 0.0
-
-        lastSoil = SoilData(0, 0.0, 0.0)
-
-        def getSelfWeightPressure(soil, lastSoil):
-            deltaDepth = soil.depth - lastSoil.depth
-            return soil.roo * deltaDepth
-
-        for i in soils.keys():
-            if soils[i].depth < self.H:
-                SelfWeightPressure += getSelfWeightPressure(soils[i], lastSoil)
-            else:
-                currentSoil = SoilData(777, self.H, soils[i].roo)
-                SelfWeightPressure += getSelfWeightPressure(currentSoil, lastSoil)
-                break
-            lastSoil = soils[i]
+        SelfWeightPressure = 19.0 * self.H
 
         print
         print "Self weight:", SelfWeightPressure

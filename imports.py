@@ -8,14 +8,12 @@ def importFiles():
     PATH, file = os.path.split(os.path.realpath(__file__))
     NODE = "/nodes.csv"
     FINIT = "/finits.csv"
-    SOIL = "/soil.txt"
 
     nodes = importNodeData(PATH + NODE)
     finits, pNorms = importFinitElements(nodes, PATH + FINIT)
-    soils = importSoilData(PATH + SOIL)
 
     print "Imports - done"
-    return nodes, finits, pNorms, soils
+    return nodes, finits, pNorms
 
 def importNodeData(PATH):
     nodes = {}
@@ -73,21 +71,3 @@ def importFinitElements(nodes, PATH):
     finitFile.close()
 
     return finits, pNorms
-
-def importSoilData(PATH):
-    soils = {}
-
-    soilFile = open(PATH, 'r')
-
-    for row in soilFile:
-        splitRow = row.split(";")
-        name = int(splitRow[0])
-        depth = float(splitRow[1])
-        roo = float(splitRow[2])
-        soils[name] = data.SoilData(name, depth, roo)
-
-    soilFile.close()
-
-    return soils
-
-
