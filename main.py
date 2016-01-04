@@ -22,16 +22,16 @@ def arvutus():
     print "\nCalcualtion start at:", datetime.datetime.now().time()
 
     #Initialization
-    robotNodes, robotFinits, robotPnorms = imp.importFiles()
-    calcNodes, calcFinits = robotNodes, robotFinits
+    robotFinits = imp.importFiles()
+    calcFinits = data.FinitData.createNewPlane(robotFinits)
 
-    H0 = data.PlaneData(robotNodes, robotFinits, depth)
-    H0.createBaseCase(robotPnorms)
+    H0 = data.PlaneData(robotFinits, depth)
+    H0.calculateEffectivePressure()
 
     #Calculation of new plane
     depth += deltaDepth
-    H1 = data.PlaneData(calcNodes, calcFinits, depth)
-    H1.generatePnormValues(H0, calculationType, poisson)
+    H1 = data.PlaneData(calcFinits, depth)
+    H1.calculateNewPnormValues(H0, calculationType, poisson)
 
     #Results
     H0.findMaxPnorm()

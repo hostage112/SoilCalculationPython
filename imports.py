@@ -10,10 +10,10 @@ def importFiles():
     FINIT = "/finits.csv"
 
     nodes = importNodeData(PATH + NODE)
-    finits, pNorms = importFinitElements(nodes, PATH + FINIT)
+    finits = importFinitElements(nodes, PATH + FINIT)
 
     print "Imports - done"
-    return nodes, finits, pNorms
+    return finits
 
 def importNodeData(PATH):
     nodes = {}
@@ -45,7 +45,6 @@ def importFinitElements(nodes, PATH):
         return midX, midY
 
     finits = {}
-    pNorms = {}
 
     finitFile = codecs.open(PATH, 'r', 'utf-16')
     reader = csv.reader(finitFile, delimiter=';', skipinitialspace=True)
@@ -54,7 +53,7 @@ def importFinitElements(nodes, PATH):
 
     for row in reader:
         name = int(row[0])
-        finitPnorm = float(row[2].replace(",", "."))
+        pNorm = float(row[2].replace(",", "."))
         area = float(row[3].replace(",", "."))
         corners = []
         for i in range(4, len(row)):
@@ -65,9 +64,8 @@ def importFinitElements(nodes, PATH):
                 pass
         x, y = calculateCenter(corners)
 
-        finits[name] = data.FinitData(name, x, y, area, corners)
-        pNorms[name] = finitPnorm
+        finits[name] = data.FinitData(name, area, corners, x, y, pNorm)
 
     finitFile.close()
 
-    return finits, pNorms
+    return finits

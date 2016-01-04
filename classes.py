@@ -8,57 +8,64 @@ class NodeData(object):
         self.y = y
 
 class FinitData(object):
-    def __init__(self, name, x, y, area, corners):
+    def __init__(self, name, area, corners, x, y, pNorm):
         self.name = name
         self.area = area
         self.corners = corners
         self.x = x
         self.y = y
+        self.pNorm = pNorm
+
+    @staticmethod
+    def createNewPlane(old):
+        new = {}
+        for i in old.keys():
+            name = old[i].name
+            area = old[i].area
+            corners = old[i].corners
+            x = old[i].x
+            y = old[i].y
+            pNorm = 0
+            new[name] = FinitData(name, area, corners, x, y, pNorm)
+        return new
 
 class PlaneData(object):
-    def __init__(self, nodes, finits, H):
-        self.nodes = nodes
+    def __init__(self, finits, H):
         self.finits = finits
         self.H = H
-        self.pNorms = {}
 
     def findMaxPnorm(self):
-        maxFinitIndex = self.pNorms.keys()[0]
-        maxPnorm = self.pNorms[maxFinitIndex]
-        for i in self.pNorms.keys():
-            if abs(self.pNorms[i]) > abs(maxPnorm):
+        maxFinitIndex = self.finits.keys()[0]
+        maxPnorm = self.finits[maxFinitIndex].pNorm
+        for i in self.finits.keys():
+            if abs(self.finits[i].pNorm) > abs(maxPnorm):
                 maxFinitIndex = i
-                maxPnorm = self.pNorms[i]
+                maxPnorm = self.finits[i].pNorm
 
         print "\nMax pressure at H =", self.H
-        print "pNorm = ", self.pNorms[maxFinitIndex]
+        print "pNorm =", self.finits[maxFinitIndex].pNorm, ";",
         print "Finit =", self.finits[maxFinitIndex].name, ";",
         print "X =", self.finits[maxFinitIndex].x, ";",
         print "Y =", self.finits[maxFinitIndex].y
 
-        return maxPnorm
+    def calculateEffectivePressure(self):
+        SelfWeightPressure = 0 #19.0 * self.H
 
-    def createBaseCase(self, pNorms):
-        self.pNorms = pNorms.copy()
-        SelfWeightPressure = 19.0 * self.H
-
-        print
         print "Self weight:", SelfWeightPressure
 
-        for i in pNorms.keys():
-            mathPnormValue = pNorms[i] - SelfWeightPressure
-            self.pNorms[i] = max(0, mathPnormValue)
+        for i in self.finits.keys():
+            mathPnormValue = self.finits[i].pNorm - SelfWeightPressure
+            self.finits[i].pNorm = max(0, mathPnormValue)
 
-        print
         print "Init - done"
 
-    def generatePnormValues(self, Old, chosenTheory, v = 0.0):
+    def calculateNewPnormValues(self, Old, chosenTheory, v = 0.0):
         def Westergaard(i, j):
             #force
-            P = Old.pNorms[j] * Old.finits[j].area
+            P = Old.finits[j].pNorm * Old.finits[j].area
             #geometry
-            dx = abs(self.nodes[i].x - Old.finits[j].x)
-            dy = abs(self.nodes[i].y - Old.finits[j].y)
+            dx = abs(self.finits[i].x - Old.finits[j].x)
+            dy = abs(self.finits[i].y - Old.finits[j].y)
             r = (dx**2 + dy ** 2) ** (1. / 2)
             #poisson
             njuu = (1 - 2 * v) / (2 * (1 - v))
@@ -72,10 +79,10 @@ class PlaneData(object):
 
         def Boussinesq(i, j):
             #force
-            P = Old.pNorms[j] * Old.finits[j].area
+            P = Old.finits[j].pNorm * Old.finits[j].area
             #geometry
-            dx = abs(self.nodes[i].x - Old.finits[j].x)
-            dy = abs(self.nodes[i].y - Old.finits[j].y)
+            dx = abs(self.finits[i].x - Old.finits[j].x)
+            dy = abs(self.finits[i].y - Old.finits[j].y)
             r = (dx**2 + dy ** 2) ** (1. / 2)
             #influence
             soilConst = 1 / (2 * math.pi)
@@ -85,7 +92,7 @@ class PlaneData(object):
             sigma = (P / (dz ** 2)) * influenceB
             return sigma
 
-        def partialNodePnorm(i):
+        def newPnorm(i):
             sumPnorm = 0
             for j in Old.finits.keys():
                 if chosenTheory == "Westergaard":
@@ -97,16 +104,8 @@ class PlaneData(object):
             return sumPnorm
 
         dz = abs(self.H - Old.H)
-        nodePnorms = {}
 
-        for i in self.nodes.keys():
-            nodePnorm = partialNodePnorm(i)
-            nodePnorms[i] = nodePnorm
+        for i in self.finits.keys():
+            self.finits[i].pNorm = newPnorm(i)
 
-        for k in self.finits.keys():
-            finitPnorm = 0
-            for m in self.finits[k].corners:
-                finitPnorm += nodePnorms[m]
 
-            finitPnorm /= len(self.finits[k].corners)
-            self.pNorms[k] = finitPnorm

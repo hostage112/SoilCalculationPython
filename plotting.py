@@ -10,7 +10,7 @@ def plotResults(target, title):
     for i in target.finits.keys():
         X = np.append(X, target.finits[i].x)
         Y = np.append(Y, target.finits[i].y)
-        pNorm = np.append(pNorm, target.pNorms[i])
+        pNorm = np.append(pNorm, target.finits[i].pNorm)
 
     plt.figure()
     plt.scatter(X, Y, c = pNorm, s=17, edgecolors = 'none', cmap = 'cool')
