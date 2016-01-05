@@ -17,7 +17,7 @@ class FinitData(object):
         self.pNorm = pNorm
 
     @staticmethod
-    def createNewPlane(old):
+    def createNewFinits(old):
         new = {}
         for i in old.keys():
             name = old[i].name
@@ -43,21 +43,19 @@ class PlaneData(object):
                 maxPnorm = self.finits[i].pNorm
 
         print "\nMax pressure at H =", self.H
-        print "pNorm =", self.finits[maxFinitIndex].pNorm, ";",
+        print "pNorm =", self.finits[maxFinitIndex].pNorm
         print "Finit =", self.finits[maxFinitIndex].name, ";",
         print "X =", self.finits[maxFinitIndex].x, ";",
         print "Y =", self.finits[maxFinitIndex].y
 
-    def calculateEffectivePressure(self):
-        SelfWeightPressure = 19.0 * self.H
+    def calculateEffectivePressure(self, roo):
+        SelfWeightPressure = roo * self.H
 
         print "Self weight:", SelfWeightPressure
 
         for i in self.finits.keys():
             mathPnormValue = self.finits[i].pNorm - SelfWeightPressure
             self.finits[i].pNorm = max(0, mathPnormValue)
-
-        print "Init - done"
 
     def calculateNewPnormValues(self, Old, chosenTheory, v = 0.0):
         def Westergaard(i, j):
@@ -66,9 +64,9 @@ class PlaneData(object):
             #geometry
             dx = abs(self.finits[i].x - Old.finits[j].x)
             dy = abs(self.finits[i].y - Old.finits[j].y)
-            r = (dx**2 + dy ** 2) ** (1. / 2)
+            r = (dx ** 2 + dy ** 2) ** (1. / 2)
             #poisson
-            njuu = (1 - 2 * v) / (2 * (1 - v))
+            njuu = (1 - 2. * v) / (2 * (1. - v))
             #influence
             soilConst = 1 / (2 * math.pi)
             distInfluence = njuu ** (1./2) / ((r / dz) ** 2 + njuu) ** (3./2)
@@ -83,7 +81,7 @@ class PlaneData(object):
             #geometry
             dx = abs(self.finits[i].x - Old.finits[j].x)
             dy = abs(self.finits[i].y - Old.finits[j].y)
-            r = (dx**2 + dy ** 2) ** (1. / 2)
+            r = (dx ** 2 + dy ** 2) ** (1. / 2)
             #influence
             soilConst = 1 / (2 * math.pi)
             distInfluence = 1 / ((1 + (r / dz) ** 2) ** (5. / 2))

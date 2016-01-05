@@ -12,25 +12,27 @@ def arvutus():
     #SETTINGS
     depth = 5.220
     deltaDepth = 3.280
+    roo = 19.0
 
-    #calculationType = "Boussinesq"
-    calculationType = "Westergaard"
-    poisson = 0.0
+    calculationType = "Boussinesq"
+    #calculationType = "Westergaard"
+    poisson = 0.30
 
     #TIMER START
     t1 = time.time()
     print "\nCalcualtion start at:", datetime.datetime.now().time()
 
-    #Initialization
+    #Finits
     robotFinits = imp.importFiles()
-    calcFinits = data.FinitData.createNewPlane(robotFinits)
+    newFinits = data.FinitData.createNewFinits(robotFinits)
 
+    #Existing plane
     H0 = data.PlaneData(robotFinits, depth)
-    H0.calculateEffectivePressure()
+    H0.calculateEffectivePressure(roo)
 
-    #Calculation of new plane
+    #New plane
     depth += deltaDepth
-    H1 = data.PlaneData(calcFinits, depth)
+    H1 = data.PlaneData(newFinits, depth)
     H1.calculateNewPnormValues(H0, calculationType, poisson)
 
     #Results
