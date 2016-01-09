@@ -8,10 +8,9 @@ class NodeData(object):
         self.y = y
 
 class FinitData(object):
-    def __init__(self, name, area, corners, x, y, pNorm):
+    def __init__(self, name, area, x, y, pNorm):
         self.name = name
         self.area = area
-        self.corners = corners
         self.x = x
         self.y = y
         self.pNorm = pNorm
@@ -22,11 +21,10 @@ class FinitData(object):
         for i in old.keys():
             name = old[i].name
             area = old[i].area
-            corners = old[i].corners
             x = old[i].x
             y = old[i].y
             pNorm = 0
-            new[name] = FinitData(name, area, corners, x, y, pNorm)
+            new[name] = FinitData(name, area, x, y, pNorm)
         return new
 
 class PlaneData(object):
@@ -34,7 +32,7 @@ class PlaneData(object):
         self.finits = finits
         self.H = H
 
-    def findMaxPnorm(self):
+    def findMaxPnorm(self, flag):
         maxFinitIndex = self.finits.keys()[0]
         maxPnorm = self.finits[maxFinitIndex].pNorm
         for i in self.finits.keys():
@@ -42,11 +40,14 @@ class PlaneData(object):
                 maxFinitIndex = i
                 maxPnorm = self.finits[i].pNorm
 
-        print "\nMax pressure at H =", self.H
-        print "pNorm =", self.finits[maxFinitIndex].pNorm
-        print "Finit =", self.finits[maxFinitIndex].name, ";",
-        print "X =", self.finits[maxFinitIndex].x, ";",
-        print "Y =", self.finits[maxFinitIndex].y
+        if flag:
+            print "\nMax pressure at H =", self.H
+            print "pNorm =", self.finits[maxFinitIndex].pNorm
+            print "Finit =", self.finits[maxFinitIndex].name, ";",
+            print "X =", self.finits[maxFinitIndex].x, ";",
+            print "Y =", self.finits[maxFinitIndex].y
+
+        return abs(maxPnorm)
 
     def calculateEffectivePressure(self, roo):
         SelfWeightPressure = roo * self.H

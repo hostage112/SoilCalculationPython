@@ -14,9 +14,9 @@ def arvutus():
     deltaDepth = 3.280
     roo = 19.0
 
-    calculationType = "Boussinesq"
-    #calculationType = "Westergaard"
-    poisson = 0.30
+    #calculationType = "Boussinesq"
+    calculationType = "Westergaard"
+    poisson = 0.00
 
     #TIMER START
     t1 = time.time()
@@ -28,19 +28,18 @@ def arvutus():
 
     #Existing plane
     H0 = data.PlaneData(robotFinits, depth)
+    mx = H0.findMaxPnorm(False)
+    plts.plotResults(H0, "Data from Robot", mx)
     H0.calculateEffectivePressure(roo)
+    mx = H0.findMaxPnorm(True)
+    plts.plotResults(H0, "Effective pressure", mx)
 
     #New plane
     depth += deltaDepth
     H1 = data.PlaneData(newFinits, depth)
     H1.calculateNewPnormValues(H0, calculationType, poisson)
-
-    #Results
-    H0.findMaxPnorm()
-    plts.plotResults(H0, "Data from Robot")
-
-    H1.findMaxPnorm()
-    plts.plotResults(H1, calculationType)
+    H1.findMaxPnorm(True)
+    plts.plotResults(H1, calculationType, mx)
 
     #TIMER END
     t2= time.time()

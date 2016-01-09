@@ -64,7 +64,7 @@ def importFinitElements(nodes, PATH):
                 pass
         x, y = calculateCenter(corners)
 
-        finits[name] = data.FinitData(name, area, corners, x, y, pNorm)
+        finits[name] = data.FinitData(name, area, x, y, pNorm)
 
     finitFile.close()
 
